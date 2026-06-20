@@ -1,0 +1,365 @@
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:#05060a;color:#fff;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 20% 20%,rgba(255,40,40,.25),transparent 45%),radial-gradient(circle at 80% 30%,rgba(40,120,255,.25),transparent 45%),radial-gradient(circle at 50% 80%,rgba(255,255,255,.04),transparent 60%);animation:shift 12s infinite ease-in-out}
+@keyframes shift{0%,100%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(18deg)}}
+.topbar{position:fixed;top:0;width:100%;height:50px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;background:rgba(10,12,18,.65);backdrop-filter:blur(26px);border-bottom:1px solid rgba(255,255,255,.08);z-index:1000;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#ff2b2b;box-shadow:0 0 14px #ff2b2b;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{transform:scale(1.4);opacity:.2}}
+.header{position:fixed;top:50px;width:100%;height:74px;display:flex;align-items:center;justify-content:center;gap:14px;background:rgba(10,12,18,.5);backdrop-filter:blur(24px);z-index:999}
+.logo-img{height:46px;width:auto;animation:float 3s infinite ease-in-out;flex-shrink:0}
+@keyframes float{50%{transform:translateY(-4px)}}
+.title{font-weight:900;font-size:19px;background:linear-gradient(90deg,#ff2b2b,#fff,#2b6fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px}
+.navbar{position:fixed;top:124px;width:100%;height:54px;display:flex;justify-content:center;align-items:center;background:rgba(10,12,18,.45);backdrop-filter:blur(24px);z-index:998;border-bottom:1px solid rgba(255,255,255,.08)}
+.tabs{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.tabs a{text-decoration:none;color:rgba(255,255,255,.7);font-size:12px;padding:8px 14px;border-radius:10px;transition:.3s;position:relative;cursor:pointer;white-space:nowrap}
+.tabs a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tabs a.active{color:#fff;background:rgba(255,43,43,.18);border:1px solid rgba(255,43,43,.35)}
+.content{padding:204px 5% 120px;min-height:100vh;max-width:1000px;margin:0 auto}
+.page{display:none}
+.page.active{display:block;animation:fadein .3s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.panelGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.panel{background:rgba(255,255,255,.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:20px;transition:.4s;box-shadow:0 20px 60px rgba(0,0,0,.4);position:relative;overflow:hidden}
+.panel:hover{transform:translateY(-8px);border-color:rgba(255,50,50,.25)}
+.panel h3{font-size:13px;letter-spacing:2px;color:rgba(255,255,255,.5);margin-bottom:12px;font-weight:700}
+.panel p{font-size:14px;color:rgba(255,255,255,.85);margin-bottom:6px}
+.panel span{color:#ff6b6b;font-weight:600}
+.bar-viz{display:flex;align-items:flex-end;gap:3px;height:36px;margin-top:10px}
+.bv{width:3px;height:10px;background:linear-gradient(#ff3b3b,#2b6fff);border-radius:2px;animation:wave 1s infinite ease-in-out}
+@keyframes wave{50%{height:34px}0%,100%{height:6px}}
+.player{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);width:92%;max-width:1000px;display:flex;align-items:center;gap:12px;padding:14px;border-radius:20px;background:rgba(255,255,255,.05);backdrop-filter:blur(26px);border:1px solid rgba(255,255,255,.08);z-index:997}
+.play-btn{background:#ff2b2b;border:none;padding:10px 18px;border-radius:12px;color:#fff;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:1px;white-space:nowrap;transition:.2s}
+.play-btn:hover{background:#cc1515}
+.viz{flex:1;display:flex;align-items:flex-end;gap:3px;height:36px}
+.section-label{font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.3);font-weight:700;margin:22px 0 10px;text-transform:uppercase}
+.section-label:first-child{margin-top:0}
+.page-head{margin-bottom:24px}
+.page-head h2{font-size:22px;font-weight:800;background:linear-gradient(90deg,#ff2b2b,#2b6fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.page-head p{font-size:12px;color:rgba(255,255,255,.4);letter-spacing:1px}
+.prog-row{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.06);margin-bottom:10px;transition:.3s;background:rgba(255,255,255,.025)}
+.prog-row:hover{border-color:rgba(255,50,50,.2);background:rgba(255,50,50,.05);transform:translateX(4px)}
+.prog-row.live{border-color:rgba(255,43,43,.35);background:rgba(255,43,43,.08)}
+.prog-time{min-width:80px;text-align:right;font-size:12px;color:rgba(255,255,255,.4);font-weight:500;letter-spacing:.5px;line-height:1.5}
+.prog-divider{width:1px;height:44px;background:rgba(255,255,255,.1);flex-shrink:0}
+.prog-divider.live-line{background:#ff2b2b}
+.prog-info{flex:1;min-width:0}
+.prog-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px}
+.prog-dj{font-size:12px;color:rgba(255,255,255,.45)}
+.prog-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:700;letter-spacing:.5px;white-space:nowrap;flex-shrink:0}
+.tag-live{background:rgba(255,43,43,.2);color:#ff6b6b;border:1px solid rgba(255,43,43,.3)}
+.tag-next{background:rgba(43,111,255,.15);color:#6b9eff;border:1px solid rgba(43,111,255,.25)}
+.tag-music{background:rgba(100,100,255,.12);color:#aaa4ff;border:1px solid rgba(100,100,255,.2)}
+.tag-news{background:rgba(255,180,43,.12);color:#ffd06b;border:1px solid rgba(255,180,43,.2)}
+.tag-talk{background:rgba(43,200,180,.12);color:#6bffd8;border:1px solid rgba(43,200,180,.2)}
+.dot-live{width:6px;height:6px;border-radius:50%;background:#ff2b2b;animation:pulse 1.2s infinite}
+.dj-card{display:flex;gap:14px;padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:12px}
+.dj-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#ff2b2b,#2b6fff);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;flex-shrink:0}
+.dj-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.dj-role{font-size:11px;color:#ff6b6b;font-weight:600;letter-spacing:.5px;margin-bottom:6px}
+.dj-bio{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5}
+.news-card{padding:18px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:14px}
+.news-date{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:1px;margin-bottom:6px}
+.news-title{font-size:15px;font-weight:700;margin-bottom:6px;color:#fff}
+.news-body{font-size:13px;color:rgba(255,255,255,.6);line-height:1.6}
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.contact-card{padding:20px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);text-align:center;text-decoration:none;color:#fff;transition:.3s;display:block}
+.contact-card:hover{transform:translateY(-6px);border-color:rgba(255,50,50,.3);background:rgba(255,255,255,.07)}
+.contact-icon{width:44px;height:44px;border-radius:50%;background:rgba(255,43,43,.15);border:1px solid rgba(255,43,43,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:18px}
+.contact-label{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-bottom:4px}
+.contact-value{font-size:13px;font-weight:700}
+.station-card{display:flex;align-items:center;gap:14px;padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);margin-bottom:12px;transition:.3s}
+.station-card:hover{border-color:rgba(43,111,255,.3);background:rgba(43,111,255,.05);transform:translateX(4px)}
+.station-icon{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#2b6fff,#ff2b2b);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+.station-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.station-freq{font-size:12px;color:#6b9eff;font-weight:600;margin-bottom:3px}
+.station-loc{font-size:11px;color:rgba(255,255,255,.4)}
+.station-status{margin-left:auto;flex-shrink:0}
+.admin-link-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;border-radius:12px;background:rgba(43,111,255,.08);border:1px solid rgba(43,111,255,.2);font-size:11px;color:rgba(255,255,255,.5);margin-bottom:18px}
+.admin-link-banner button{background:transparent;border:1px solid rgba(107,158,255,.4);color:#6b9eff;font-size:11px;padding:5px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+</style>
+
+<div class="bg"></div>
+
+<div class="topbar">
+  <div class="dot"></div>
+  <span id="time"></span>
+  <span>|</span>
+  <span id="date"></span>
+  <span>| Surigao City, PH</span>
+  <span>| 30°C</span>
+  <span>| Listeners: <span id="listeners">128</span></span>
+</div>
+
+<<style>
+.logo{
+    width:40px;
+    height:40px;
+    object-fit:contain;
+    flex-shrink:0;
+}
+</style>
+
+<div class="header">
+    <img src="logo.png" alt="Infinite Radio Logo" class="logo">
+    <div class="title">INFINITE RADIO PHILIPPINES</div>
+</div>
+
+<div class="navbar">
+  <div class="tabs" id="tabs">
+    <a data-page="home" class="active">HOME</a>
+    <a data-page="schedule">SCHEDULE</a>
+    <a data-page="news">NEWS</a>
+    <a data-page="contact">CONTACT</a>
+    <a data-page="stations">INFINITE STATIONS</a>
+  </div>
+</div>
+
+<div class="content">
+
+  <div class="page active" id="page-home">
+    <div class="admin-link-banner">
+      <span>Viewing the public listener site. Station staff can manage news and schedule from the admin panel.</span>
+      <button onclick="sendPrompt('Show me the admin panel for Infinite Radio')">Open admin ↗</button>
+    </div>
+    <div class="panelGrid">
+      <div class="panel">
+        <h3>LIVE NOW</h3>
+        <p>Program: <span id="now">—</span></p>
+        <p>Anchor/Host/DJ: <span id="dj">—</span></p>
+        <p id="liveTimeRange" style="font-size:12px;color:rgba(255,255,255,.4)"></p>
+        <div class="bar-viz" id="bviz"></div>
+      </div>
+      <div class="panel">
+        <h3>LATEST NEWS</h3>
+        <div id="homeNewsPreview"></div>
+      </div>
+      <div class="panel">
+        <h3>UP NEXT</h3>
+        <p id="upNextTitle" style="font-weight:700">—</p>
+        <p id="upNextDj" style="font-size:12px;color:rgba(255,255,255,.5)"></p>
+        <p id="upNextTime" style="font-size:12px;color:rgba(255,255,255,.4);margin-top:4px"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-schedule">
+    <div class="page-head"><h2>Program schedule</h2><p>DAILY LINEUP · INFINITE RADIO PHILIPPINES</p></div>
+    <div class="section-label">Today's lineup</div>
+    <div id="scheduleList"></div>
+    <div class="section-label">Anchors &amp; DJs</div>
+    <div id="djList"></div>
+  </div>
+
+  <div class="page" id="page-news">
+    <div class="page-head"><h2>News</h2><p>UPDATED FROM OUR NEWSROOM</p></div>
+    <div id="newsList"></div>
+  </div>
+
+  <div class="page" id="page-contact">
+    <div class="page-head"><h2>Contact us</h2><p>GET IN TOUCH WITH INFINITE RADIO</p></div>
+    <div class="contact-grid">
+      <a class="contact-card" href="tel:+639171234567">
+        <div class="contact-icon"><i class="ti ti-phone" aria-hidden="true"></i></div>
+        <div class="contact-label">CALL / TEXT</div>
+        <div class="contact-value">+63 917 123 4567</div>
+      </a>
+      <a class="contact-card" href="mailto:info@infiniteradioph.com">
+        <div class="contact-icon"><i class="ti ti-mail" aria-hidden="true"></i></div>
+        <div class="contact-label">EMAIL</div>
+        <div class="contact-value">info@infiniteradioph.com</div>
+      </a>
+      <a class="contact-card" href="https://www.facebook.com/dxsj933infiniteradiosurigao" target="_blank" rel="noopener">
+        <div class="contact-icon"><i class="ti ti-brand-facebook" aria-hidden="true"></i></div>
+        <div class="contact-label">FACEBOOK</div>
+        <div class="contact-value">dxsj933infiniteradiosurigao</div>
+      </a>
+      <a class="contact-card" href="https://www.youtube.com/@dxsj933infiniteradiosurigao" target="_blank" rel="noopener">
+        <div class="contact-icon"><i class="ti ti-brand-youtube" aria-hidden="true"></i></div>
+        <div class="contact-label">YOUTUBE</div>
+        <div class="contact-value">@dxsj933infiniteradiosurigao</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="page" id="page-stations">
+    <div class="page-head"><h2>Infinite Stations network</h2><p>AFFILIATED STATIONS ACROSS THE PHILIPPINES</p></div>
+    <div id="stationsList"></div>
+  </div>
+
+</div>
+
+<div class="player">
+  <button class="play-btn" id="playBtn">PLAY</button>
+  <audio id="radio"><source src="https://stream-02.surfernetwork.com/yy0d3w86zxhvv"></audio>
+  <div class="viz" id="viz"></div>
+</div>
+
+<script>
+const programs = [
+  {title:"MAAYONG BUNTAG SURIGAO", dj:"Lito Gibertas", time:"05:00 AM", end:"06:00 AM", type:"TALK", desc:"Good-morning talk show with community guests and entertainment."},
+  {title:"RATSADA BALITA", dj:"Lito Gibertas", time:"06:00 AM", end:"07:00 AM", type:"NEWS", desc:"Morning news, local updates, and community announcements."},
+  {title:"RATSADA BALITA", dj:"Geomar Macsabejon", time:"07:00 AM", end:"08:00 AM", type:"NEWS", desc:"Balitang totoo, mabilis, at maaasahan, hatid ng mga reporters ng Infinite Radio."},
+  {title:"SABI MO, SABI KO", dj:"DJ Andy & Ate Jo", time:"09:00 AM", end:"11:00 AM", type:"TALK", desc:"Opinion talk show, listeners call in to share views on hot topics."},
+  {title:"LADY BATUD", dj:"EXL DRAMA", time:"11:00 AM", end:"12:00 PM", type:"TALK", desc:"Drama and storytelling segment."},
+  {title:"ISUMBONG SA BARANGAY", dj:"Lito Gibertas", time:"12:00 PM", end:"01:00 PM", type:"TALK", desc:"Community concerns and barangay-level issues answered live."},
+  {title:"AFTERNOON DELIGHT", dj:"DJ Vee", time:"03:00 PM", end:"05:00 PM", type:"MUSIC", desc:"Mellow afternoon vibes, love songs, acoustic, and requests."},
+  {title:"INFINITE ROCK", dj:"DJ Andy", time:"05:00 PM", end:"07:00 PM", type:"MUSIC", desc:"Rock, alternative, and LSS-worthy hits for the evening commute."},
+];
+
+const djProfiles = [
+  {name:"Lito Gibertas", role:"Morning anchor", bio:"Veteran broadcaster anchoring Maayong Buntag Surigao and the morning Ratsada Balita news bulletin."},
+  {name:"Geomar Macsabejon", role:"News anchor", bio:"Delivers the 7AM news block with field reports from across the region."},
+  {name:"DJ Andy", role:"Talk &amp; music host", bio:"Co-host of Sabi Mo, Sabi Ko and host of the evening Infinite Rock block."},
+  {name:"Ate Jo", role:"Talk show host", bio:"Brings warmth and community stories to the mid-morning talk block."},
+  {name:"DJ Vee", role:"Afternoon music host", bio:"Curates the mellow Afternoon Delight playlist of love songs and acoustic requests."},
+  {name:"EXL DRAMA", role:"Drama segment host", bio:"Hosts Lady Batud, the station's storytelling and drama segment."},
+];
+
+function loadNews(){
+  try{
+    const raw = localStorage.getItem('infiniteRadioNews');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  return [
+    {date:"June 19, 2026", title:"Infinite Radio expands coverage to three new provinces", body:"The network announced new transmitter sites set to go live this quarter, extending signal reach across Mindanao."},
+    {date:"June 17, 2026", title:"Barangay road repair completed ahead of rainy season", body:"Local government units report completion of priority road sections discussed on Isumbong sa Barangay."},
+    {date:"June 15, 2026", title:"Infinite Radio anchors recognized at regional broadcast awards", body:"Station anchors were honored for community reporting and public service programming."},
+  ];
+}
+
+const tagMap = { NEWS:'<span class="prog-tag tag-news">News</span>', TALK:'<span class="prog-tag tag-talk">Talk</span>', MUSIC:'<span class="prog-tag tag-music">Music</span>' };
+
+function parseTime(t){
+  const [hm,ap]=t.split(' ');
+  let [h,m]=hm.split(':').map(Number);
+  h=h%12+(ap==='PM'?12:0);
+  return h*60+m;
+}
+function getLiveIndex(){
+  const now=new Date();
+  const mins=now.getHours()*60+now.getMinutes();
+  for(let i=0;i<programs.length;i++){
+    const s=parseTime(programs[i].time), e=parseTime(programs[i].end);
+    if(mins>=s&&mins<e) return i;
+  }
+  return -1;
+}
+
+function renderSchedule(){
+  const liveIdx=getLiveIndex();
+  let html='';
+  programs.forEach((p,i)=>{
+    const isLive=i===liveIdx;
+    const isNext=i===(liveIdx+1)%programs.length && liveIdx!==-1;
+    let badge=isLive?'<span class="prog-tag tag-live"><span class="dot-live"></span>LIVE NOW</span>':isNext?'<span class="prog-tag tag-next">UP NEXT</span>':tagMap[p.type]||'';
+    html+=`<div class="prog-row${isLive?' live':''}">
+      <div class="prog-time">${p.time}<br>${p.end}</div>
+      <div class="prog-divider${isLive?' live-line':''}"></div>
+      <div class="prog-info"><div class="prog-name">${p.title}</div><div class="prog-dj">${p.dj} &nbsp;·&nbsp; ${p.desc}</div></div>
+      ${badge}
+    </div>`;
+  });
+  document.getElementById('scheduleList').innerHTML=html;
+}
+
+function renderDjs(){
+  document.getElementById('djList').innerHTML=djProfiles.map(d=>{
+    const initials=d.name.replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    return `<div class="dj-card">
+      <div class="dj-avatar">${initials}</div>
+      <div><div class="dj-name">${d.name}</div><div class="dj-role">${d.role.toUpperCase()}</div><div class="dj-bio">${d.bio}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderNews(){
+  const items=loadNews();
+  const html=items.map(n=>`<div class="news-card">
+    <div class="news-date">${(n.date||'').toUpperCase()}</div>
+    <div class="news-title">${n.title}</div>
+    <div class="news-body">${n.body}</div>
+  </div>`).join('');
+  document.getElementById('newsList').innerHTML=html || '<p style="color:rgba(255,255,255,.4);font-size:13px">No news articles yet.</p>';
+  if(items[0]){
+    document.getElementById('homeNewsPreview').innerHTML=`<p style="font-weight:700;font-size:13px;margin-bottom:4px">${items[0].title}</p><p style="font-size:12px;color:rgba(255,255,255,.5)">${items[0].date}</p>`;
+  }
+}
+
+const stations = [
+  {name:"Infinite Radio Surigao", freq:"104.3 FM", loc:"Surigao City, Surigao del Norte", status:"ONLINE"},
+  {name:"Infinite Radio Butuan", freq:"99.1 FM", loc:"Butuan City, Agusan del Norte", status:"ONLINE"},
+  {name:"Infinite Radio Cagayan de Oro", freq:"101.7 FM", loc:"Cagayan de Oro, Misamis Oriental", status:"ONLINE"},
+  {name:"Infinite Radio Davao", freq:"96.5 FM", loc:"Davao City, Davao del Sur", status:"COMING SOON"},
+  {name:"Infinite Radio Tandag", freq:"107.9 FM", loc:"Tandag City, Surigao del Sur", status:"ONLINE"},
+];
+
+function renderStations(){
+  document.getElementById('stationsList').innerHTML=stations.map(s=>{
+    const initials=s.name.replace('Infinite Radio ','').slice(0,2).toUpperCase();
+    const isOnline=s.status==='ONLINE';
+    return `<div class="station-card">
+      <div class="station-icon">${initials}</div>
+      <div><div class="station-name">${s.name}</div><div class="station-freq">${s.freq}</div><div class="station-loc">${s.loc}</div></div>
+      <div class="station-status"><span class="prog-tag ${isOnline?'tag-live':'tag-next'}">${isOnline?'<span class="dot-live"></span>':''}${s.status}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function switchPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.tabs a').forEach(a=>a.classList.toggle('active', a.dataset.page===name));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('tabs').addEventListener('click', e=>{
+  const a=e.target.closest('a[data-page]');
+  if(a) switchPage(a.dataset.page);
+});
+
+function updateTime(){
+  const d=new Date();
+  document.getElementById('time').innerText=d.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true});
+  document.getElementById('date').innerText=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'2-digit',year:'numeric'});
+}
+setInterval(updateTime,1000); updateTime();
+setInterval(()=>{ document.getElementById('listeners').innerText=120+Math.floor(Math.random()*80); },3000);
+
+function updateLiveNow(){
+  const idx=getLiveIndex();
+  const liveProg = idx!==-1 ? programs[idx] : null;
+  document.getElementById('now').innerText = liveProg ? liveProg.title : 'Overnight playlist';
+  document.getElementById('dj').innerText = liveProg ? liveProg.dj : 'Auto DJ';
+  document.getElementById('liveTimeRange').innerText = liveProg ? `${liveProg.time} – ${liveProg.end}` : '';
+  const nextIdx = idx!==-1 ? (idx+1)%programs.length : 0;
+  const nextProg = programs[nextIdx];
+  document.getElementById('upNextTitle').innerText = nextProg.title;
+  document.getElementById('upNextDj').innerText = nextProg.dj;
+  document.getElementById('upNextTime').innerText = `${nextProg.time} – ${nextProg.end}`;
+  renderSchedule();
+}
+updateLiveNow();
+setInterval(updateLiveNow, 30000);
+
+renderDjs();
+renderNews();
+renderStations();
+
+const radio=document.getElementById('radio');
+const playBtn=document.getElementById('playBtn');
+playBtn.onclick=async()=>{
+  if(radio.paused){await radio.play();playBtn.innerText='PAUSE';}
+  else{radio.pause();playBtn.innerText='PLAY';}
+};
+
+const viz=document.getElementById('viz');
+const bviz=document.getElementById('bviz');
+for(let i=0;i<30;i++){
+  const style=`width:3px;border-radius:2px;height:10px;background:linear-gradient(#ff3b3b,#2b6fff);animation:wave 1s infinite ease-in-out;animation-delay:${i*0.04}s`;
+  const b1=document.createElement('div'); b1.className='bv'; b1.style.cssText=style;
+  viz.appendChild(b1);
+  const b2=document.createElement('div'); b2.className='bv'; b2.style.cssText=style;
+  bviz.appendChild(b2);
+}
+</script>
