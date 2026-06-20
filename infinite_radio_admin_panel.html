@@ -1,0 +1,351 @@
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:#05060a;color:#fff;overflow-x:hidden}
+.bg{position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at 20% 20%,rgba(40,120,255,.22),transparent 45%),radial-gradient(circle at 80% 80%,rgba(255,40,40,.18),transparent 45%)}
+.admin-shell{max-width:1000px;margin:0 auto;padding:0 0 80px}
+.admin-header{display:flex;align-items:center;gap:14px;padding:20px 0;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:24px;flex-wrap:wrap}
+.logo-img{height:42px;width:auto;flex-shrink:0}
+.admin-title{font-weight:900;font-size:17px;background:linear-gradient(90deg,#ff2b2b,#fff,#2b6fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.admin-badge{margin-left:auto;font-size:10px;letter-spacing:1.5px;color:#ffd06b;background:rgba(255,180,43,.12);border:1px solid rgba(255,180,43,.25);padding:5px 12px;border-radius:20px;font-weight:700}
+.admin-nav{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+.admin-nav button{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.6);font-size:12px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;transition:.2s}
+.admin-nav button:hover{color:#fff;background:rgba(255,255,255,.08)}
+.admin-nav button.active{color:#fff;background:rgba(43,111,255,.15);border-color:rgba(43,111,255,.35)}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadein .3s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:22px;margin-bottom:20px}
+.card h3{font-size:14px;font-weight:700;margin-bottom:4px}
+.card .sub{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:18px;letter-spacing:.5px}
+
+.field-label{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:1px;font-weight:700;margin-bottom:6px;display:block}
+.field-input{width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-size:13px;margin-bottom:16px;font-family:inherit}
+.field-input:focus{outline:none;border-color:rgba(43,111,255,.5)}
+.btn{background:#2b6fff;border:none;color:#fff;font-weight:700;font-size:13px;padding:10px 18px;border-radius:10px;cursor:pointer;transition:.2s;letter-spacing:.3px}
+.btn:hover{background:#1a55d6}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-outline{background:transparent;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.8)}
+.btn-outline:hover{background:rgba(255,255,255,.06)}
+.btn-danger{background:transparent;border:1px solid rgba(255,43,43,.3);color:#ff6b6b}
+.btn-danger:hover{background:rgba(255,43,43,.1)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+
+.status-msg{font-size:12px;padding:10px 14px;border-radius:10px;margin-bottom:16px;display:none}
+.status-msg.show{display:block}
+.status-ok{background:rgba(43,200,180,.1);border:1px solid rgba(43,200,180,.25);color:#6bffd8}
+.status-err{background:rgba(255,43,43,.1);border:1px solid rgba(255,43,43,.25);color:#ff6b6b}
+.status-info{background:rgba(43,111,255,.08);border:1px solid rgba(43,111,255,.2);color:#6b9eff}
+
+.sheet-howto{font-size:12px;color:rgba(255,255,255,.5);line-height:1.8;margin-bottom:16px}
+.sheet-howto code{background:rgba(0,0,0,.35);padding:2px 7px;border-radius:5px;color:#6b9eff;font-size:11px}
+.sheet-howto ol{margin-left:18px;margin-top:6px}
+
+.article-row{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.06);margin-bottom:10px;background:rgba(255,255,255,.02)}
+.article-info{flex:1;min-width:0}
+.article-title{font-size:13px;font-weight:700;margin-bottom:3px}
+.article-meta{font-size:11px;color:rgba(255,255,255,.4);margin-bottom:5px}
+.article-body{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5}
+.article-actions{display:flex;gap:6px;flex-shrink:0}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.icon-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.icon-btn.danger:hover{background:rgba(255,43,43,.15);color:#ff6b6b;border-color:rgba(255,43,43,.3)}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat-box{background:rgba(255,255,255,.04);border-radius:14px;padding:16px;text-align:center}
+.stat-num{font-size:24px;font-weight:800;color:#fff}
+.stat-lbl{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1px;margin-top:4px}
+
+.prog-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.06);margin-bottom:8px;background:rgba(255,255,255,.02)}
+.prog-time{min-width:70px;font-size:11px;color:rgba(255,255,255,.4)}
+.prog-info{flex:1}
+.prog-name{font-size:13px;font-weight:700}
+.prog-dj{font-size:11px;color:rgba(255,255,255,.45)}
+
+.live-dot{width:6px;height:6px;border-radius:50%;background:#ff2b2b;display:inline-block;margin-right:6px;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{transform:scale(1.4);opacity:.2}}
+.empty-state{text-align:center;padding:40px 20px;color:rgba(255,255,255,.3);font-size:12px}
+</style>
+
+<div class="bg"></div>
+<div class="admin-shell">
+
+<style>
+.logo{
+    width:40px;
+    height:40px;
+    object-fit:contain;
+    flex-shrink:0;
+}
+</style>
+
+<div class="header">
+    <img src="logo.png" alt="Infinite Radio Logo" class="logo">
+    <div class="title">INFINITE RADIO PHILIPPINES</div>
+</div>
+
+  <div class="admin-nav" id="adminNav">
+    <button data-tab="dashboard" class="active">Dashboard</button>
+    <button data-tab="news">News articles</button>
+    <button data-tab="schedule">Schedule</button>
+    <button data-tab="stations">Stations</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-dashboard">
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-num" id="statNews">0</div><div class="stat-lbl">NEWS ARTICLES</div></div>
+      <div class="stat-box"><div class="stat-num" id="statProg">0</div><div class="stat-lbl">PROGRAMS</div></div>
+      <div class="stat-box"><div class="stat-num" id="statStations">0</div><div class="stat-lbl">AFFILIATE STATIONS</div></div>
+      <div class="stat-box"><div class="stat-num"><span class="live-dot"></span><span id="statLive">—</span></div><div class="stat-lbl">ON AIR NOW</div></div>
+    </div>
+    <div class="card">
+      <h3>Quick actions</h3>
+      <div class="sub">COMMON ADMIN TASKS</div>
+      <div class="btn-row">
+        <button class="btn" onclick="switchTab('news')"><i class="ti ti-news" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>Manage news</button>
+        <button class="btn-outline btn" onclick="switchTab('schedule')"><i class="ti ti-calendar" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>Edit schedule</button>
+        <button class="btn-outline btn" onclick="sendPrompt('Show me the public Infinite Radio listener site')">View public site ↗</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-news">
+    <div class="card">
+      <h3><i class="ti ti-table" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>Import from Google Sheets</h3>
+      <div class="sub">SYNC NEWS ARTICLES FROM A PUBLISHED SHEET</div>
+      <div class="sheet-howto">
+        Set up your sheet once, then re-sync any time:
+        <ol>
+          <li>Create columns in this order: <code>date</code>, <code>title</code>, <code>body</code></li>
+          <li>In Google Sheets: <code>File &gt; Share &gt; Publish to web</code></li>
+          <li>Choose the news sheet/tab and select <code>CSV</code> as the format</li>
+          <li>Copy the generated link and paste it below</li>
+        </ol>
+      </div>
+      <label class="field-label">PUBLISHED SHEET CSV URL</label>
+      <input type="text" class="field-input" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
+      <div class="status-msg" id="syncStatus"></div>
+      <div class="btn-row">
+        <button class="btn" id="syncBtn" onclick="syncFromSheet()"><i class="ti ti-refresh" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>Sync now</button>
+        <button class="btn-outline btn" onclick="document.getElementById('sheetUrl').value='';">Clear</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><i class="ti ti-plus" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>Add article manually</h3>
+      <div class="sub">FOR ONE-OFF UPDATES WITHOUT EDITING THE SHEET</div>
+      <label class="field-label">TITLE</label>
+      <input type="text" class="field-input" id="newTitle" placeholder="e.g. Infinite Radio launches new morning block">
+      <label class="field-label">DATE</label>
+      <input type="text" class="field-input" id="newDate" placeholder="e.g. June 19, 2026">
+      <label class="field-label">BODY</label>
+      <input type="text" class="field-input" id="newBody" placeholder="Short article summary">
+      <div class="btn-row">
+        <button class="btn" onclick="addManualArticle()"><i class="ti ti-plus" aria-hidden="true" style="vertical-align:-2px;margin-right:4px"></i>Add article</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Published articles</h3>
+      <div class="sub" id="newsCountLabel">0 ARTICLES LIVE ON THE PUBLIC SITE</div>
+      <div id="newsManageList"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-schedule">
+    <div class="card">
+      <h3>Daily program schedule</h3>
+      <div class="sub">READ-ONLY PREVIEW — EDIT VALUES IN THE PROGRAMS ARRAY IN CODE</div>
+      <div id="scheduleManageList"></div>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-stations">
+    <div class="card">
+      <h3>Affiliate stations</h3>
+      <div class="sub">READ-ONLY PREVIEW — EDIT VALUES IN THE STATIONS ARRAY IN CODE</div>
+      <div id="stationsManageList"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const programs = [
+  {title:"MAAYONG BUNTAG SURIGAO", dj:"Lito Gibertas", time:"05:00 AM", end:"06:00 AM"},
+  {title:"RATSADA BALITA", dj:"Lito Gibertas", time:"06:00 AM", end:"07:00 AM"},
+  {title:"RATSADA BALITA", dj:"Geomar Macsabejon", time:"07:00 AM", end:"08:00 AM"},
+  {title:"SABI MO, SABI KO", dj:"DJ Andy & Ate Jo", time:"09:00 AM", end:"11:00 AM"},
+  {title:"LADY BATUD", dj:"EXL DRAMA", time:"11:00 AM", end:"12:00 PM"},
+  {title:"ISUMBONG SA BARANGAY", dj:"Lito Gibertas", time:"12:00 PM", end:"01:00 PM"},
+  {title:"AFTERNOON DELIGHT", dj:"DJ Vee", time:"03:00 PM", end:"05:00 PM"},
+  {title:"INFINITE ROCK", dj:"DJ Andy", time:"05:00 PM", end:"07:00 PM"},
+];
+const stations = [
+  {name:"Infinite Radio Surigao", freq:"104.3 FM", loc:"Surigao City, Surigao del Norte", status:"ONLINE"},
+  {name:"Infinite Radio Butuan", freq:"99.1 FM", loc:"Butuan City, Agusan del Norte", status:"ONLINE"},
+  {name:"Infinite Radio Cagayan de Oro", freq:"101.7 FM", loc:"Cagayan de Oro, Misamis Oriental", status:"ONLINE"},
+  {name:"Infinite Radio Davao", freq:"96.5 FM", loc:"Davao City, Davao del Sur", status:"COMING SOON"},
+  {name:"Infinite Radio Tandag", freq:"107.9 FM", loc:"Tandag City, Surigao del Sur", status:"ONLINE"},
+];
+
+function loadNews(){
+  try{
+    const raw=localStorage.getItem('infiniteRadioNews');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  const defaults=[
+    {date:"June 19, 2026", title:"Infinite Radio expands coverage to three new provinces", body:"The network announced new transmitter sites set to go live this quarter, extending signal reach across Mindanao."},
+    {date:"June 17, 2026", title:"Barangay road repair completed ahead of rainy season", body:"Local government units report completion of priority road sections discussed on Isumbong sa Barangay."},
+    {date:"June 15, 2026", title:"Infinite Radio anchors recognized at regional broadcast awards", body:"Station anchors were honored for community reporting and public service programming."},
+  ];
+  saveNews(defaults);
+  return defaults;
+}
+function saveNews(items){
+  try{ localStorage.setItem('infiniteRadioNews', JSON.stringify(items)); }catch(e){}
+}
+
+function parseTime(t){
+  const [hm,ap]=t.split(' ');
+  let [h,m]=hm.split(':').map(Number);
+  h=h%12+(ap==='PM'?12:0);
+  return h*60+m;
+}
+function getLiveIndex(){
+  const now=new Date();
+  const mins=now.getHours()*60+now.getMinutes();
+  for(let i=0;i<programs.length;i++){
+    const s=parseTime(programs[i].time), e=parseTime(programs[i].end);
+    if(mins>=s&&mins<e) return i;
+  }
+  return -1;
+}
+
+function showStatus(msg, type){
+  const el=document.getElementById('syncStatus');
+  el.className='status-msg show status-'+type;
+  el.innerHTML=msg;
+}
+
+function parseCsv(text){
+  const lines=text.trim().split(/\r?\n/);
+  const rows=lines.map(line=>{
+    const cells=[]; let cur=''; let inQuotes=false;
+    for(let i=0;i<line.length;i++){
+      const c=line[i];
+      if(c==='"'){ inQuotes=!inQuotes; }
+      else if(c===','&&!inQuotes){ cells.push(cur); cur=''; }
+      else { cur+=c; }
+    }
+    cells.push(cur);
+    return cells.map(c=>c.trim());
+  });
+  return rows;
+}
+
+async function syncFromSheet(){
+  const url=document.getElementById('sheetUrl').value.trim();
+  if(!url){ showStatus('Paste your published Google Sheets CSV link first.', 'err'); return; }
+  const btn=document.getElementById('syncBtn');
+  btn.disabled=true;
+  showStatus('<i class="ti ti-refresh" aria-hidden="true" style="vertical-align:-2px"></i> Fetching sheet…', 'info');
+  try{
+    const res=await fetch(url);
+    if(!res.ok) throw new Error('Sheet returned status '+res.status);
+    const text=await res.text();
+    const rows=parseCsv(text);
+    if(rows.length<2) throw new Error('No data rows found in sheet');
+    const header=rows[0].map(h=>h.toLowerCase());
+    const dateIdx=header.indexOf('date');
+    const titleIdx=header.indexOf('title');
+    const bodyIdx=header.indexOf('body');
+    if(titleIdx===-1) throw new Error('Sheet must have a "title" column');
+    const items=rows.slice(1).filter(r=>r[titleIdx]).map(r=>({
+      date: dateIdx!==-1 ? r[dateIdx] : '',
+      title: r[titleIdx],
+      body: bodyIdx!==-1 ? r[bodyIdx] : ''
+    })).reverse();
+    saveNews(items);
+    renderNewsManage();
+    showStatus(`<i class="ti ti-check" aria-hidden="true" style="vertical-align:-2px"></i> Synced ${items.length} article${items.length===1?'':'s'} from Google Sheets.`, 'ok');
+  }catch(e){
+    showStatus(`<i class="ti ti-x" aria-hidden="true" style="vertical-align:-2px"></i> Sync failed: ${e.message}. Make sure the sheet is published as CSV and the URL is correct.`, 'err');
+  }
+  btn.disabled=false;
+}
+
+function addManualArticle(){
+  const title=document.getElementById('newTitle').value.trim();
+  const date=document.getElementById('newDate').value.trim() || new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const body=document.getElementById('newBody').value.trim();
+  if(!title){ alert('Please enter a title.'); return; }
+  const items=loadNews();
+  items.unshift({date,title,body});
+  saveNews(items);
+  document.getElementById('newTitle').value='';
+  document.getElementById('newDate').value='';
+  document.getElementById('newBody').value='';
+  renderNewsManage();
+}
+
+function deleteArticle(idx){
+  const items=loadNews();
+  items.splice(idx,1);
+  saveNews(items);
+  renderNewsManage();
+}
+
+function renderNewsManage(){
+  const items=loadNews();
+  document.getElementById('newsCountLabel').innerText=`${items.length} ARTICLE${items.length===1?'':'S'} LIVE ON THE PUBLIC SITE`;
+  document.getElementById('statNews').innerText=items.length;
+  const list=document.getElementById('newsManageList');
+  if(items.length===0){
+    list.innerHTML='<div class="empty-state">No articles yet. Sync from Google Sheets or add one manually above.</div>';
+    return;
+  }
+  list.innerHTML=items.map((n,i)=>`<div class="article-row">
+    <div class="article-info">
+      <div class="article-title">${n.title}</div>
+      <div class="article-meta">${n.date||'No date'}</div>
+      <div class="article-body">${n.body||''}</div>
+    </div>
+    <div class="article-actions">
+      <button class="icon-btn danger" aria-label="Delete article" onclick="deleteArticle(${i})"><i class="ti ti-trash" aria-hidden="true" style="font-size:14px"></i></button>
+    </div>
+  </div>`).join('');
+}
+
+function renderScheduleManage(){
+  document.getElementById('statProg').innerText=programs.length;
+  const liveIdx=getLiveIndex();
+  document.getElementById('statLive').innerText = liveIdx!==-1 ? programs[liveIdx].title : 'Off air';
+  document.getElementById('scheduleManageList').innerHTML=programs.map((p,i)=>`<div class="prog-row">
+    <div class="prog-time">${p.time}–${p.end}</div>
+    <div class="prog-info"><div class="prog-name">${i===liveIdx?'<span class="live-dot"></span>':''}${p.title}</div><div class="prog-dj">${p.dj}</div></div>
+  </div>`).join('');
+}
+
+function renderStationsManage(){
+  document.getElementById('statStations').innerText=stations.length;
+  document.getElementById('stationsManageList').innerHTML=stations.map(s=>`<div class="prog-row">
+    <div class="prog-info"><div class="prog-name">${s.name}</div><div class="prog-dj">${s.freq} · ${s.loc} · ${s.status}</div></div>
+  </div>`).join('');
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('#adminNav button').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+}
+document.getElementById('adminNav').addEventListener('click', e=>{
+  const b=e.target.closest('button[data-tab]');
+  if(b) switchTab(b.dataset.tab);
+});
+
+renderNewsManage();
+renderScheduleManage();
+renderStationsManage();
+</script>
